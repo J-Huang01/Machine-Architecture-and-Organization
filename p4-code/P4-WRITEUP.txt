@@ -1,0 +1,351 @@
+                              ____________
+
+                               P4 WRITEUP
+                              ____________
+
+
+- Name: (FILL THIS in)
+- NetID: (THE kauf0095 IN kauf0095@umn.edu)
+
+Answer the questions below according to the project specification. Write
+your answers directly in this text file and submit it along with your
+code.
+
+
+PROBLEM 1: sumdiag_OPTM()
+=========================
+
+  Do your timing study on loginNN.cselabs.umn.edu
+
+
+(A) Paste Source Code
+~~~~~~~~~~~~~~~~~~~~~
+
+  Paste a copy of your source code for the function `sumdiag_OPTM()'
+
+  ####################### YOUR ANSWER HERE #########################
+  int sumdiag_VER3(matrix_t *mat, vector_t *vec) {
+  // OPTIMIZED CODE HERE
+  matrix_t mat1 = *mat;
+  vector_t vec1 = *vec;
+  if(vec1.len != (mat1.rows + mat1.cols -1)){
+    printf("sumdiag_base: bad sizes\n");
+    return 1;
+  }
+  for(int i=0; i<vec1.len; i++){                     // initialize vector of diagonal sums
+    VSET(vec1,i,0);                                   // to all 0s
+  }                 
+  for(int i = 0; i < mat1.rows; i++){    //loop through all rows
+    int j;  //column variable
+    for(j = 0; j < mat1.cols-5; j+=5){        //loop through all columns
+      int diag_num = j - i + mat1.cols - 1;   //calculate the number of diagonal               
+      VSET(vec1, diag_num, MGET(mat1, i, j) + VGET(vec1, diag_num));  //calucate sum of position (1,1)
+      VSET(vec1, diag_num+1, MGET(mat1, i, j+1) + VGET(vec1, diag_num+1));//calucate sum of position (1,2)
+      VSET(vec1, diag_num+2, MGET(mat1, i, j+2) + VGET(vec1, diag_num+2));//calucate sum of position (1,3)
+      VSET(vec1, diag_num+3, MGET(mat1, i, j+3) + VGET(vec1, diag_num+3));//calucate sum of position (1,4)
+      VSET(vec1, diag_num+4, MGET(mat1, i, j+4) + VGET(vec1, diag_num+4));//calucate sum of position (1,5)
+    }
+    for(; j < mat1.cols; j++){       //if the length can not divide by 5, set the reminder
+      int diag_num = j - i + mat1.cols - 1;                    
+      VSET(vec1, diag_num, MGET(mat1, i, j) + VGET(vec1, diag_num)); 
+    }
+  }
+  return 0;
+  }
+  ##################################################################
+
+
+(B) Timing on loginNN.cselabs.umn.edu
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Paste a copy of the results of running `sumdiag_benchmark' on
+  loginNN.cselabs.umn.edu (like login01, login02, ..., login06) in the
+  space below which shows how your performance optimizations improved on
+  the baseline codes.
+
+  ####################### YOUR ANSWER HERE #########################
+  ==== Matrix Diagonal Sum Benchmark Version 3 ====
+------ Tuned for csel-remote-lnx-NN machines --------
+  SIZE       BASE       OPTM  SPDUP POINTS 
+   512 1.4813e-02 1.8890e-03   7.84   0.74 
+  1024 7.9478e-02 8.5920e-03   9.25   1.60 
+  1101 9.9037e-02 1.0011e-02   9.89   1.78 
+  2048 3.9314e-01 3.4285e-02  11.47   3.52 
+  4099 1.7409e+00 1.4031e-01  12.41   7.27 
+  6001 3.7436e+00 2.7757e-01  13.49  11.00 
+  8192 7.3222e+00 5.1231e-01  14.29  15.35 
+RAW POINTS: 41.26
+ _   _                 _   _           _   _       _____ _    ____ _____ _ 
+| \ | | _____      __ | |_| |__   __ _| |_( )___  |  ___/ \  / ___|_   _| |
+|  \| |/ _ \ \ /\ / / | __| '_ \ / _` | __|// __| | |_ / _ \ \___ \ | | | |
+| |\  | (_) \ V  V /  | |_| | | | (_| | |_  \__ \ |  _/ ___ \ ___) || | |_|
+|_| \_|\___/ \_/\_/    \__|_| |_|\__,_|\__| |___/ |_|/_/   \_\____/ |_| (_)
+
+                             ...,?77??!~~~~!???77?<~.... 
+                        ..?7`                           `7!.. 
+                    .,=`          ..~7^`   I                  ?1. 
+       ........  ..^            ?`  ..?7!1 .               ...??7 
+      .        .7`        .,777.. .I.    . .!          .,7! 
+      ..     .?         .^      .l   ?i. . .`       .,^ 
+       b    .!        .= .?7???7~.     .>r .      .= 
+       .,.?4         , .^         1        `     4... 
+        J   ^         ,            5       `         ?<. 
+       .%.7;         .`     .,     .;                   .=. 
+       .+^ .,       .%      MML     F       .,             ?, 
+        P   ,,      J      .MMN     F        6               4. 
+        l    d,    ,       .MMM!   .t        ..               ,, 
+        ,    JMa..`         MMM`   .         .!                .; 
+         r   .M#            .M#   .%  .      .~                 ., 
+       dMMMNJ..!                 .P7!  .>    .         .         ,, 
+       .WMMMMMm  ?^..       ..,?! ..    ..   ,  Z7`        `?^..  ,, 
+          ?THB3       ?77?!        .Yr  .   .!   ?,              ?^C 
+            ?,                   .,^.` .%  .^      5. 
+              7,          .....?7     .^  ,`        ?. 
+                `<.                 .= .`'           1 
+                ....dn... ... ...,7..J=!7,           ., 
+             ..=     G.,7  ..,o..  .?    J.           F 
+           .J.  .^ ,,,t  ,^        ?^.  .^  `?~.      F 
+          r %J. $    5r J             ,r.1      .=.  .% 
+          r .77=?4.    ``,     l ., 1  .. <.       4., 
+          .$..    .X..   .n..  ., J. r .`  J.       `' 
+        .?`  .5        `` .%   .% .' L.'    t 
+        ,. ..1JL          .,   J .$.?`      . 
+                1.          .=` ` .J7??7<.. .; 
+                 JS..    ..^      L        7.: 
+                   `> ..       J.  4. 
+                    +   r `t   r ~=..G. 
+                    =   $  ,.  J 
+                    2   r   t  .; 
+              .,7!  r   t`7~..  j.. 
+              j   7~L...$=.?7r   r ;?1. 
+               8.      .=    j ..,^   .. 
+              r        G              . 
+            .,7,        j,           .>=. 
+         .J??,  `T....... %             .. 
+      ..^     <.  ~.    ,.             .D 
+    .?`        1   L     .7.........?Ti..l 
+   ,`           L  .    .%    .`!       `j, 
+ .^             .  ..   .`   .^  .?7!?7+. 1 
+.`              .  .`..`7.  .^  ,`      .i.; 
+.7<..........~<<3?7!`    4. r  `          G% 
+                          J.` .!           % 
+                            JiJ           .` 
+                              .1.         J 
+                                 ?1.     .'         
+                                     7<..%
+
+      ____    ____                        
+   _ | ___|  | __ )  ___  _ __  _   _ ___ 
+ _| ||___ \  |  _ \ / _ \| '_ \| | | / __|
+|_   _|__) | | |_) | (_) | | | | |_| \__ \
+  |_||____/  |____/ \___/|_| |_|\__,_|___/
+
+TOTAL POINTS: 40 / 35
+  ##################################################################
+
+
+(C) Optimizations
+~~~~~~~~~~~~~~~~~
+
+  Describe in some detail the optimizations you used to speed the code
+  up.  THE CODE SHOULD CONTAIN SOME COMMENTS already to describe these
+  but in the section below, describe in English the techniques you used
+  to make the code run faster.  Format your descriptions into discrete
+  chunks such as.
+        Optimization 1: Blah bla blah... This should make run
+        faster because yakkety yakeety yak.
+
+        Optimization 2: Blah bla blah... This should make run
+        faster because yakkety yakeety yak.
+
+        ...  Optimization N: Blah bla blah... This should make run
+        faster because yakkety yakeety yak.
+  Full credit solutions will have a least THREE optimizations and
+  describe WHY these improved performance in at least a couple
+  sentences.
+
+  ####################### YOUR ANSWER HERE #########################
+  Optimization 1: register utilization
+  I use variables to store pointers instead of call pointers each time. Because for each 
+  time pointer called in code, it will cause repeated memory references and cost a lot of
+  time. By using variables, those variable can be assigned to registers which will help to
+  speed up. It can increase the pipeline and superscalar abilities of the processor.
+
+  Optimization 2: Eliminating barriers to natural compiler optimizations
+  I replaced short function calls with equivalent inline code or Macro invocations.
+  It is faster because there is no control flow change as the code for the macro is
+  directly inserted at the use location.
+
+  Optimization 3: Algorithms/loop unrolling
+  Like it shows in lecture slides, I changed the loop that traversed the mat. In the base 
+  code, it jump a lot to find the number of diagonal and add on it. I use for loop to traverse
+  by order and group 5 element in a set. Each time I work on 5 element in a line. This can 
+  avoid jump a lot and cost time in memory and easily assess the memory.
+
+  ##################################################################
+
+
+PROBLEM 2: Timing Search Algorithms
+===================================
+
+  Do your timing study on loginNN.cselabs.umn.edu. In most cases, report
+  times larger than 1e-03 seconds as times shorter than this are
+  unreliable. Run searches for more repetitions to lengthen run times.
+
+
+(A) Min Size for Algorithmic Differences
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Determine the size of input array where one starts to see a measurable
+  difference in the performance of the linear and logarithmic
+  algorithms.  Produce a timing table which includes all algorithms
+  which clearly demonstrates an uptick in the times associated with some
+  while others remain much lower.  Identify what size this appears to be
+  a occur.
+
+  SHOW A TIMING TABLE to support your conclusions and ensure that the
+  times reported are larger that 1e-03.
+
+  ####################### YOUR ANSWER HERE #########################
+  huan2460@csel-remote-lnx-01:/home/huan2460/CSCI2021/p4-code $ ./search_benchmark 1 10 100
+    SIZE  NSEARCH      array       list     binary       tree 
+       2      400 2.0000e-06 3.0000e-06 3.0000e-06 3.0000e-06 
+       4      800 5.0000e-06 5.0000e-06 5.0000e-06 4.0000e-06 
+       8     1600 1.1000e-05 1.1000e-05 9.0000e-06 1.0000e-05 
+      16     3200 3.2000e-05 4.0000e-05 2.0000e-05 1.9000e-05 
+      32     6400 1.4800e-04 2.0700e-04 4.8000e-05 5.0000e-05 
+      64    12800 5.5600e-04 8.1400e-04 1.3000e-04 1.0000e-04 
+     128    25600 1.9120e-03 3.5500e-03 4.0000e-04 4.1400e-04 
+     256    51200 7.0290e-03 1.3514e-02 1.6180e-03 1.5590e-03 
+     512   102400 2.6947e-02 5.3678e-02 4.2960e-03 3.5460e-03 
+    1024   204800 1.0161e-01 2.5256e-01 8.6350e-03 6.8900e-03 
+  
+  When the size is appears to be occur around 128, we can see a measurable difference in the
+  performance. In the size of 128, the binary array search is nearly 5 times fast as linear array
+  search. And when size increase, the gap is also increase. in the size of 1024, the binary array
+  search is over 10 times as fast as the linear array search. Because linear array search runs
+  in O(n) and binary array search runs in O(log(n)).
+  linear array search and linked list search are similar, as size increase, the time grow faster 
+  than binary array search and binary tree search. 
+
+  ##################################################################
+
+
+(B) Linear Search in List vs Array
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Determine whether the linear array and linked list search remain
+  approximately at the same performance level as size increases to large
+  data or whether one begins to become favorable over other. Determine
+  the approximate size at which this divergence becomes obvious. Discuss
+  reasons WHY this difference arises.
+
+  SHOW A TIMING TABLE to support your conclusions and ensure that the
+  times reported are larger that 1e-03.
+
+
+  ####################### YOUR ANSWER HERE #########################
+  huan2460@csel-remote-lnx-01:/home/huan2460/CSCI2021/p4-code $ ./search_benchmark 1 10 100 la ll
+    SIZE  NSEARCH      array       list 
+       2      400 2.0000e-06 2.0000e-06 
+       4      800 5.0000e-06 5.0000e-06 
+       8     1600 1.1000e-05 1.1000e-05 
+      16     3200 3.2000e-05 3.2000e-05 
+      32     6400 1.4100e-04 1.9000e-04 
+      64    12800 5.1600e-04 7.5500e-04 
+     128    25600 1.8030e-03 3.3210e-03 
+     256    51200 6.5980e-03 1.2629e-02 
+     512   102400 2.5176e-02 4.9385e-02 
+    1024   204800 9.8682e-02 2.3506e-01 
+  
+  When the size is relatively small, linear array search and linear list search are similar, but after
+  1024 they have a much measurable difference. The linear array search is nearly twice faster than 
+  linear list search. Linear list search start to take more time. I think the reason is that
+  linked list take more space in the memory to mentain the data structure. For array, it stored in a continous
+  area in memory while linked list can stored in any space. It cause the time waste when the algorithm runs.
+  The other reason is that since linked list use pointer, then it always access the main memory, the 
+  main memory is at bottom level of memory, then it will cost more time than access cache.
+
+  ##################################################################
+
+
+(C) Binary Search in Tree vs Array
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  Compare the binary array search and binary tree search on small to
+  very large arrays. Determine if there is a size at which the
+  performance of these two begins to diverge. If so, describe why this
+  might be happening based on your understanding of the data structures
+  and the memory system. If not, describe why you believe there is
+  little performance difference between the two.
+
+  SHOW A TIMING TABLE to support your conclusions and ensure that the
+  times reported are larger that 1e-03.
+
+  ####################### YOUR ANSWER HERE #########################
+  huan2460@csel-remote-lnx-01:/home/huan2460/CSCI2021/p4-code $ ./search_benchmark 5 15 100 ba bt
+    SIZE  NSEARCH     binary       tree 
+      32     6400 6.2000e-05 5.1000e-05 
+      64    12800 1.2900e-04 1.0700e-04 
+     128    25600 4.3500e-04 4.3900e-04 
+     256    51200 1.7510e-03 1.6510e-03 
+     512   102400 4.3090e-03 3.5910e-03 
+    1024   204800 9.0780e-03 7.5720e-03 
+    2048   409600 1.9749e-02 1.6058e-02 
+    4096   819200 4.1507e-02 3.3543e-02 
+    8192  1638400 8.4323e-02 6.9845e-02 
+   16384  3276800 1.6874e-01 1.4090e-01 
+   32768  6553600 3.2729e-01 3.0494e-01 
+  
+  I don't think there exist a size at which the performance start to diverge. First the time complexity
+  for both binary array search and binary tree search are O(log(n)). For a balance tree, for each 
+  time we search, the elements divided into halves, which is similar to binary array search process.
+  In binary tree search, we use pointers, which will cost a lot time. and in binary array search, it
+  will take time to calculate which side to start and store indexes in the memory, which also cost 
+  time. Thus the difference in speed stays relatively same when size increase.
+
+  ##################################################################
+
+
+(D) Caching Effects on Algorithms
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  It is commonly believed that memory systems that feature a Cache will
+  lead to arrays performing faster than linked structures such as Linked
+  Lists and Binary Search Trees. Describe whether your timings confirm
+  or refute this belief.  Address both types of algorithms in your
+  answer:
+  - What effects does Cache have on Linear Search in arrays and lists
+    and why?
+  - What effects does Cache have on Binary Search in arrays and trees
+    and why?
+
+  ####################### YOUR ANSWER HERE #########################
+  1. the exist of cache makes linear search in array faster than linear list
+  search, because the store arrangement for array in memory is more close, 
+  each element in the array is close to the next element. when we read one 
+  element, at that time, most part in array may in the cache. Then it will 
+  run faster. For the linked list, elements can stored in any position in the
+  memory, so the cache may not have any elements in the linked list, and 
+  processor will access the main memory often. It takes a lot of time.
+
+  2. Caching effects on both binary array search and binary tree search are
+  similar. Because they have similar process and both use pointers. Even the 
+  arrangement for array in memory is more closer, the search process need more 
+  calculation and jump a lot in the memory. Thus the cache effect is not significant
+  in binary array search. Since tree has pointers and need a lot of jump in memory,
+  thus they have similar memory access approach.
+
+  ##################################################################
+
+
+(E) OPTIONAL MAKEUP CREDIT
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  If you decided to make use of a table of function pointers/structs
+  which is worth makeup credit, describe your basic design for this
+  below.
+
+  ####################### YOUR ANSWER HERE #########################
+
+  ##################################################################
